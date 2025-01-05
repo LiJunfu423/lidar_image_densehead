@@ -28,7 +28,8 @@ def get_thresholds(scores: np.ndarray, num_gt, num_sample_pts=41):
 
 
 def clean_data(gt_anno, dt_anno, current_class, difficulty):
-    CLASS_NAMES = ['car', 'pedestrian', 'cyclist', 'van', 'person_sitting', 'truck']
+    # CLASS_NAMES = ['bicycle', 'bicycle_rack', 'Cyclist', 'Pedestrian', 'rider', 'Car', 'truck']#7
+    CLASS_NAMES = ['Car', 'Pedestrian', 'Cyclist']#3
     MIN_HEIGHT = [40, 25, 25]
     MAX_OCCLUSION = [0, 1, 2]
     MAX_TRUNCATION = [0.15, 0.3, 0.5]
@@ -53,7 +54,7 @@ def clean_data(gt_anno, dt_anno, current_class, difficulty):
             valid_class = -1
         ignore = False
         if ((gt_anno["occluded"][i] > MAX_OCCLUSION[difficulty])
-                or (gt_anno["truncated"][i] > MAX_TRUNCATION[difficulty])
+                # or (gt_anno["truncated"][i] > MAX_TRUNCATION[difficulty])
                 or (height <= MIN_HEIGHT[difficulty])):
             # if gt_anno["difficulty"][i] > difficulty or gt_anno["difficulty"][i] == -1:
             ignore = True
@@ -362,6 +363,7 @@ def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=50):
             dt_boxes = np.concatenate([a["bbox"] for a in dt_annos_part], 0)
             overlap_part = image_box_overlap(gt_boxes, dt_boxes)
         elif metric == 1:
+            #处理gt数据
             loc = np.concatenate(
                 [a["location"][:, [0, 2]] for a in gt_annos_part], 0)
             dims = np.concatenate(
@@ -369,6 +371,7 @@ def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=50):
             rots = np.concatenate([a["rotation_y"] for a in gt_annos_part], 0)
             gt_boxes = np.concatenate(
                 [loc, dims, rots[..., np.newaxis]], axis=1)
+            #处理dt数据
             loc = np.concatenate(
                 [a["location"][:, [0, 2]] for a in dt_annos_part], 0)
             dims = np.concatenate(
@@ -466,6 +469,7 @@ def eval_class(gt_annos,
     Returns:
         dict of recall, precision and aos
     """
+
     assert len(gt_annos) == len(dt_annos)
     num_examples = len(gt_annos)
     split_parts = get_split_parts(num_examples, num_parts)
@@ -600,7 +604,7 @@ def do_eval(gt_annos,
 
         if PR_detail_dict is not None:
             PR_detail_dict['aos'] = ret['orientation']
-
+#bev
     ret = eval_class(gt_annos, dt_annos, current_classes, difficultys, 1,
                      min_overlaps)
     mAP_bev = get_mAP(ret["precision"])
@@ -608,7 +612,7 @@ def do_eval(gt_annos,
 
     if PR_detail_dict is not None:
         PR_detail_dict['bev'] = ret['precision']
-
+#3d
     ret = eval_class(gt_annos, dt_annos, current_classes, difficultys, 2,
                      min_overlaps)
     mAP_3d = get_mAP(ret["precision"])
@@ -637,20 +641,35 @@ def do_coco_style_eval(gt_annos, dt_annos, current_classes, overlap_ranges,
 
 
 def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict=None):
-    overlap_0_7 = np.array([[0.7, 0.5, 0.5, 0.7,
-                             0.5, 0.7], [0.7, 0.5, 0.5, 0.7, 0.5, 0.7],
-                            [0.7, 0.5, 0.5, 0.7, 0.5, 0.7]])
-    overlap_0_5 = np.array([[0.7, 0.5, 0.5, 0.7,
-                             0.5, 0.5], [0.5, 0.25, 0.25, 0.5, 0.25, 0.5],
-                            [0.5, 0.25, 0.25, 0.5, 0.25, 0.5]])
+    #7
+    # overlap_0_7 = np.array([[0.7, 0.5, 0.5, 0.7, 0.5, 
+    #                          0.5, 0.5], [0.7, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+    #                         [0.7, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]])
+    # overlap_0_5 = np.array([[0.7, 0.5, 0.5, 0.5, 0.5, 
+    #                          0.5, 0.5], [0.7, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+    #                         [0.7, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]])
+    #3
+    overlap_0_7 = np.array([[0.7, 0.5, 0.5], [0.7, 0.5, 0.5],
+                            [0.7, 0.5, 0.5]])
+    overlap_0_5 = np.array([[0.7, 0.5, 0.5], [0.5, 0.25, 0.25],
+                            [0.5, 0.25, 0.25]])
     min_overlaps = np.stack([overlap_0_7, overlap_0_5], axis=0)  # [2, 3, 5]
+    # print("min_overlaps shape is :",min_overlaps.shape)
+    #7
+    # class_to_name = {
+    #     0: 'Car',
+    #     1: 'Pedestrian',
+    #     2: 'Cyclist',
+    #     3: 'bicycle',
+    #     4: 'bicycle_rack',
+    #     5: 'truck',
+    #     6: 'rider'
+    # }
+    #3
     class_to_name = {
         0: 'Car',
         1: 'Pedestrian',
-        2: 'Cyclist',
-        3: 'Van',
-        4: 'Person_sitting',
-        5: 'Truck'
+        2: 'Cyclist'
     }
     name_to_class = {v: n for n, v in class_to_name.items()}
     if not isinstance(current_classes, (list, tuple)):
@@ -664,6 +683,9 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
     current_classes = current_classes_int
     min_overlaps = min_overlaps[:, :, current_classes]
     result = ''
+
+    # dt_annos=gt_annos #t1223
+
     # check whether alpha is valid
     compute_aos = False
     for anno in dt_annos:
@@ -747,19 +769,28 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
 
 
 def get_coco_eval_result(gt_annos, dt_annos, current_classes):
+    #7
+    # class_to_name = {
+    #     0: 'Car',
+    #     1: 'Pedestrian',
+    #     2: 'Cyclist',
+    #     3: 'bicycle',
+    #     4: 'bicycle_rack',
+    #     5: 'truck',
+    #     6: 'rider'
+    # }
+    #3
+    #3
     class_to_name = {
         0: 'Car',
         1: 'Pedestrian',
         2: 'Cyclist',
-        3: 'Van',
-        4: 'Person_sitting',
     }
+    #
     class_to_range = {
         0: [0.5, 0.95, 10],
         1: [0.25, 0.7, 10],
         2: [0.25, 0.7, 10],
-        3: [0.5, 0.95, 10],
-        4: [0.25, 0.7, 10],
     }
     name_to_class = {v: n for n, v in class_to_name.items()}
     if not isinstance(current_classes, (list, tuple)):

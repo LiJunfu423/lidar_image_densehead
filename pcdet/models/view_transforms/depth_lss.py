@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from pcdet.ops.bev_pool import bev_pool
+import torch.nn.functional as F
 
 
 def gen_dx_bx(xbound, ybound, zbound):
@@ -65,7 +66,8 @@ class DepthLSSTransform(nn.Module):
                 nn.Conv2d(out_channel, out_channel, 3, padding=1, bias=False),
                 nn.BatchNorm2d(out_channel),
                 nn.ReLU(True),
-                nn.Conv2d(out_channel, out_channel, 3, stride=downsample, padding=1, bias=False),
+                nn.Conv2d(out_channel, out_channel, 5, stride=5, padding=2, bias=False),
+                # nn.Conv2d(out_channel, out_channel, 3, padding=1, bias=False),
                 nn.BatchNorm2d(out_channel),
                 nn.ReLU(True),
                 nn.Conv2d(out_channel, out_channel, 3, padding=1, bias=False),
@@ -154,20 +156,35 @@ class DepthLSSTransform(nn.Module):
         return final
 
     def get_cam_feats(self, x, d):
+        # print("image shape is",x.shape)
+        # print("depth shape is",d.shape)
+
         B, N, C, fH, fW = x.shape
 
         d = d.view(B * N, *d.shape[2:])
         x = x.view(B * N, C, fH, fW)
 
         d = self.dtransform(d)
+
+        # print("Shape of d:", d.shape)
+        # print("Shape of x:", x.shape)
+
         x = torch.cat([d, x], dim=1)
+
+        # print("Shape of x after concat:", x.shape)
+        
         x = self.depthnet(x)
+
+        # print("Shape of x after depthnet:", x.shape)
 
         depth = x[:, : self.D].softmax(dim=1)
         x = depth.unsqueeze(1) * x[:, self.D : (self.D + self.C)].unsqueeze(2)
+        # print("Shape of x after softmax:", x.shape)
 
         x = x.view(B, N, self.C, self.D, fH, fW)
         x = x.permute(0, 1, 3, 4, 5, 2)
+        # print("Shape of x:", x.shape)
+        #[9, 1, 118, 32, 88, 80]
         return x
 
     def forward(self, batch_dict):
@@ -180,10 +197,13 @@ class DepthLSSTransform(nn.Module):
             batch_dict:
                 spatial_features_img (tensor): bev features from image modality
         """
+        # print('batch_dict',batch_dict)
+        # print('batch_dict---frame_id',batch_dict['frame_id'])
         x = batch_dict['image_fpn'] 
         x = x[0]
         BN, C, H, W = x.size()
-        img = x.view(int(BN/6), 6, C, H, W)
+         # img = x.view(int(BN/6), 6, C, H, W)  6个摄像头 现在只有一个摄像头 改成1
+        img = x.view(BN, 1, C, H, W)
 
         camera_intrinsics = batch_dict['camera_intrinsics']
         camera2lidar = batch_dict['camera2lidar']
@@ -191,15 +211,27 @@ class DepthLSSTransform(nn.Module):
         lidar_aug_matrix = batch_dict['lidar_aug_matrix']
         lidar2image = batch_dict['lidar2image']
 
+        # print("lidar2image",lidar2image.shape)
+        lidar2image = torch.unsqueeze(lidar2image,dim=1)
+        camera2lidar = torch.unsqueeze(camera2lidar, dim=1)
+        # print("lidar2image",lidar2image.shape)
+
         intrins = camera_intrinsics[..., :3, :3]
         post_rots = img_aug_matrix[..., :3, :3]
         post_trans = img_aug_matrix[..., :3, 3]
+        # print("camera2lidar",camera2lidar.shape)
         camera2lidar_rots = camera2lidar[..., :3, :3]
         camera2lidar_trans = camera2lidar[..., :3, 3]
+        # print("camera2lidar_rots",camera2lidar_rots.shape)
+        # print("camera2lidar_trans",camera2lidar_trans.shape)
+        # camera2lidar_trans = torch.unsqueeze(camera2lidar_trans,dim=1)
 
+        intrins = intrins[:1, ...]
+
+        #获取 LiDAR 点云数据    
         points = batch_dict['points']
 
-        batch_size = BN // 6
+        batch_size = BN
         depth = torch.zeros(batch_size, img.shape[1], 1, *self.image_size).to(points[0].device)
 
         for b in range(batch_size):
@@ -249,10 +281,23 @@ class DepthLSSTransform(nn.Module):
             post_trans, extra_rots=extra_rots, extra_trans=extra_trans,
         )
         # use points depth to assist the depth prediction in images
-        x = self.get_cam_feats(img, depth)
-        x = self.bev_pool(geom, x)
-        x = self.downsample(x)
+        x = self.get_cam_feats(img, depth) #(B, N, self.D, fH, fW, self.C) 
+
+        # print("x after getCamFeats is",x.shape)#x after getCamFeats is torch.Size([9, 1, 118, 32, 88, 80])
+
+        x = self.bev_pool(geom, x)#（BN,C,H,W)
+
+        # print("x after bevPool is",x.shape)#x after bevPool is torch.Size([9, 80, 640, 640])
+        # print("x before downSample is",x.shape)
+        x = self.downsample(x) 
+        # print("x after downSample is",x.shape)#x after downSample is torch.Size([9, 80, 128, 128])
+
         # convert bev features from (b, c, x, y) to (b, c, y, x)
+
+        #注释之后看看情况
         x = x.permute(0, 1, 3, 2)
+
+        # batch_dict['spatial_features_img'] = x
+        # x = F.interpolate(x, size=(128,128), mode='bilinear', align_corners=False)#（BN,C,H,W)
         batch_dict['spatial_features_img'] = x
         return batch_dict

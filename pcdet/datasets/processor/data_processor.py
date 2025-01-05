@@ -247,6 +247,7 @@ class DataProcessor(object):
     def image_calibrate(self,data_dict=None, config=None):
         if data_dict is None:
             return partial(self.image_calibrate, config=config)
+        # print("data_dict has keys :",data_dict.keys())  # 打印所有的键
         img_process_infos = data_dict['img_process_infos']
         transforms = []
         for img_process_info in img_process_infos:

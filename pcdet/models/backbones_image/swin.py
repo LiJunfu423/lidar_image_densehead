@@ -713,9 +713,15 @@ class SwinTransformer(nn.Module):
             self.load_state_dict(state_dict, False)
 
     def forward(self, batch_dict):
-        x = batch_dict['camera_imgs']
-        B, N, C, H, W = x.size()
-        x = x.view(B * N, C, H, W)
+        # x = batch_dict['camera_imgs']
+        x = batch_dict['images']
+        # print("Input tensor shape: ", x.shape)
+        # B, N, C, H, W = x.size()
+        
+        # #test
+        # N, C, H, W = x.size()
+        
+        # x = x.view(B * N, C, H, W)
         x, hw_shape = self.patch_embed(x)
 
         if self.use_abs_pos_embed:

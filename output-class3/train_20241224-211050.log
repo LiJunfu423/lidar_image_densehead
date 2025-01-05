@@ -1,0 +1,572 @@
+2024-12-24 21:10:50,262   INFO  **********************Start logging**********************
+2024-12-24 21:10:50,262   INFO  CUDA_VISIBLE_DEVICES=1
+2024-12-24 21:10:50,262   INFO  Training with a single process
+2024-12-24 21:10:50,262   INFO  cfg_file         /home/junfu/data/lir/OpenPCDet/tools/cfgs/nuscenes_models/bevfusion.yaml
+2024-12-24 21:10:50,262   INFO  batch_size       3
+2024-12-24 21:10:50,262   INFO  epochs           80
+2024-12-24 21:10:50,262   INFO  workers          4
+2024-12-24 21:10:50,262   INFO  extra_tag        default
+2024-12-24 21:10:50,262   INFO  ckpt             None
+2024-12-24 21:10:50,262   INFO  pretrained_model None
+2024-12-24 21:10:50,262   INFO  launcher         none
+2024-12-24 21:10:50,262   INFO  tcp_port         18888
+2024-12-24 21:10:50,262   INFO  sync_bn          False
+2024-12-24 21:10:50,262   INFO  fix_random_seed  False
+2024-12-24 21:10:50,262   INFO  ckpt_save_interval 1
+2024-12-24 21:10:50,263   INFO  local_rank       None
+2024-12-24 21:10:50,263   INFO  max_ckpt_save_num 30
+2024-12-24 21:10:50,263   INFO  merge_all_iters_to_one_epoch False
+2024-12-24 21:10:50,263   INFO  set_cfgs         None
+2024-12-24 21:10:50,263   INFO  max_waiting_mins 0
+2024-12-24 21:10:50,263   INFO  start_epoch      0
+2024-12-24 21:10:50,263   INFO  num_epochs_to_eval 0
+2024-12-24 21:10:50,263   INFO  save_to_file     False
+2024-12-24 21:10:50,263   INFO  use_tqdm_to_record False
+2024-12-24 21:10:50,263   INFO  logger_iter_interval 50
+2024-12-24 21:10:50,263   INFO  ckpt_save_time_interval 300
+2024-12-24 21:10:50,263   INFO  wo_gpu_stat      False
+2024-12-24 21:10:50,263   INFO  use_amp          False
+2024-12-24 21:10:50,263   INFO  cfg.ROOT_DIR: /media/data/junfu_data/lidar_image/OpenPCDet
+2024-12-24 21:10:50,263   INFO  cfg.LOCAL_RANK: 0
+2024-12-24 21:10:50,263   INFO  cfg.CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+2024-12-24 21:10:50,263   INFO  ----------- DATA_CONFIG -----------
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.DATASET: KittiDataset
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.DATA_PATH: /home/junfu/data/lir/OpenPCDet/data/vod
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [0, -25.6, -3, 51.2, 25.6, 2]
+2024-12-24 21:10:50,263   INFO  ----------- DATA_SPLIT -----------
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+2024-12-24 21:10:50,263   INFO  ----------- INFO_PATH -----------
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.INFO_PATH.train: ['kitti_infos_train.pkl']
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.INFO_PATH.test: ['kitti_infos_val.pkl']
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.GET_ITEM_LIST: ['points', 'points_radar', 'images', 'calib_matricies']
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.FOV_POINTS_ONLY: True
+2024-12-24 21:10:50,263   INFO  ----------- DATA_AUGMENTOR -----------
+2024-12-24 21:10:50,263   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_world_rotation', 'gt_sampling']
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x']}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+2024-12-24 21:10:50,264   INFO  ----------- POINT_FEATURE_ENCODING -----------
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z', 'intensity']
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+2024-12-24 21:10:50,264   INFO  ----------- POINT_FEATURE_ENCODING_RADAR -----------
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING_RADAR.encoding_type: absolute_coordinates_encoding
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING_RADAR.used_feature_list: ['x', 'y', 'z', 'rcs', 'v_r', 'v_r_comp', 'time']
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING_RADAR.src_feature_list: ['x', 'y', 'z', 'rcs', 'v_r', 'v_r_comp', 'time']
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.05, 0.05, 0.1], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 16000, 'test': 40000}}, {'NAME': 'image_calibrate'}]
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG._BASE_CONFIG_: /home/junfu/data/lir/OpenPCDet/tools/cfgs/dataset_configs/kitti_dataset.yaml
+2024-12-24 21:10:50,264   INFO  ----------- CAMERA_CONFIG -----------
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.USE_CAMERA: True
+2024-12-24 21:10:50,264   INFO  ----------- IMAGE -----------
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.IMAGE.FINAL_DIM: [256, 704]
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.IMAGE.RESIZE_LIM_TRAIN: [0.4, 0.6]
+2024-12-24 21:10:50,264   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.IMAGE.RESIZE_LIM_TEST: [0.48, 0.48]
+2024-12-24 21:10:50,264   INFO  ----------- MODEL -----------
+2024-12-24 21:10:50,264   INFO  cfg.MODEL.NAME: BevFusion
+2024-12-24 21:10:50,264   INFO  ----------- VFE -----------
+2024-12-24 21:10:50,264   INFO  cfg.MODEL.VFE.NAME: MeanVFE
+2024-12-24 21:10:50,264   INFO  ----------- BACKBONE_3D -----------
+2024-12-24 21:10:50,264   INFO  cfg.MODEL.BACKBONE_3D.NAME: VoxelResBackBone8x
+2024-12-24 21:10:50,264   INFO  cfg.MODEL.BACKBONE_3D.USE_BIAS: False
+2024-12-24 21:10:50,264   INFO  ----------- MAP_TO_BEV -----------
+2024-12-24 21:10:50,264   INFO  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+2024-12-24 21:10:50,264   INFO  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+2024-12-24 21:10:50,265   INFO  ----------- IMAGE_BACKBONE -----------
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.NAME: SwinTransformer
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.EMBED_DIMS: 96
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.DEPTHS: [2, 2, 6, 2]
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.NUM_HEADS: [3, 6, 12, 24]
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.WINDOW_SIZE: 7
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.MLP_RATIO: 4
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.DROP_RATE: 0.0
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.ATTN_DROP_RATE: 0.0
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.DROP_PATH_RATE: 0.2
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.PATCH_NORM: True
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.OUT_INDICES: [1, 2, 3]
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.WITH_CP: False
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.CONVERT_WEIGHTS: True
+2024-12-24 21:10:50,265   INFO  ----------- INIT_CFG -----------
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.INIT_CFG.type: Pretrained
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.IMAGE_BACKBONE.INIT_CFG.checkpoint: swint-nuimages-pretrained.pth
+2024-12-24 21:10:50,265   INFO  ----------- NECK -----------
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.NECK.NAME: GeneralizedLSSFPN
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.NECK.IN_CHANNELS: [192, 384, 768]
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.NECK.OUT_CHANNELS: 256
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.NECK.START_LEVEL: 0
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.NECK.END_LEVEL: -1
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.NECK.NUM_OUTS: 3
+2024-12-24 21:10:50,265   INFO  ----------- VTRANSFORM -----------
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.VTRANSFORM.NAME: DepthLSSTransform
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.VTRANSFORM.IMAGE_SIZE: [256, 704]
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.VTRANSFORM.IN_CHANNEL: 256
+2024-12-24 21:10:50,265   INFO  cfg.MODEL.VTRANSFORM.OUT_CHANNEL: 80
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VTRANSFORM.FEATURE_SIZE: [32, 88]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VTRANSFORM.XBOUND: [0.0, 51.2, 0.08]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VTRANSFORM.YBOUND: [-25.6, 25.6, 0.08]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VTRANSFORM.ZBOUND: [-3.0, 2.0, 5.0]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VTRANSFORM.DBOUND: [1.0, 60.0, 0.5]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VTRANSFORM.DOWNSAMPLE: 2
+2024-12-24 21:10:50,266   INFO  ----------- VFE_DUAL -----------
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VFE_DUAL.NAME: PillarVFE_DUAL
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VFE_DUAL.WITH_DISTANCE: False
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VFE_DUAL.USE_ABSLOTE_XYZ: True
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VFE_DUAL.USE_NORM: True
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VFE_DUAL.NUM_FILTERS: [32]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.VFE_DUAL.NUM_POINT_FEATURES: 3
+2024-12-24 21:10:50,266   INFO  ----------- MAP_TO_BEV_DUAL -----------
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.MAP_TO_BEV_DUAL.NAME: PointPillarScatter_DUAL
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.MAP_TO_BEV_DUAL.WITH_DISTANCE: False
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.MAP_TO_BEV_DUAL.NUM_BEV_FEATURES: 32
+2024-12-24 21:10:50,266   INFO  ----------- FUSER -----------
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.FUSER.NAME: ConvFuser
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.FUSER.IN_CHANNEL: 368
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.FUSER.OUT_CHANNEL: 256
+2024-12-24 21:10:50,266   INFO  ----------- BACKBONE_2D -----------
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [4, 8]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+2024-12-24 21:10:50,266   INFO  cfg.MODEL.BACKBONE_2D.USE_CONV_FOR_NO_STRIDE: True
+2024-12-24 21:10:50,266   INFO  ----------- DENSE_HEAD -----------
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.NAME: AnchorHeadSingle
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.USE_DIRECTION_CLASSIFIER: True
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.DIR_OFFSET: 0.78539
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.DIR_LIMIT_OFFSET: 0.0
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.NUM_DIR_BINS: 2
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.ANCHOR_GENERATOR_CONFIG: [{'class_name': 'Car', 'anchor_sizes': [[3.9, 1.6, 1.56]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-1.78], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.6, 'unmatched_threshold': 0.45}, {'class_name': 'Pedestrian', 'anchor_sizes': [[0.8, 0.6, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.6], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'Cyclist', 'anchor_sizes': [[1.76, 0.6, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.6], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}]
+2024-12-24 21:10:50,267   INFO  ----------- TARGET_ASSIGNER_CONFIG -----------
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NAME: AxisAlignedTargetAssigner
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.POS_FRACTION: -1.0
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.SAMPLE_SIZE: 512
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NORM_BY_NUM_EXAMPLES: False
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MATCH_HEIGHT: False
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.BOX_CODER: ResidualCoder
+2024-12-24 21:10:50,267   INFO  ----------- LOSS_CONFIG -----------
+2024-12-24 21:10:50,267   INFO  ----------- LOSS_WEIGHTS -----------
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.dir_weight: 0.2
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2024-12-24 21:10:50,267   INFO  ----------- POST_PROCESSING -----------
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.1
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+2024-12-24 21:10:50,267   INFO  ----------- NMS_CONFIG -----------
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.01
+2024-12-24 21:10:50,267   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2024-12-24 21:10:50,268   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2024-12-24 21:10:50,268   INFO  ----------- OPTIMIZATION -----------
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 3
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.NUM_EPOCHS: 80
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.OPTIMIZER: adam_cosineanneal
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.LR: 0.008
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.01
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.MOMENTUM: 0.9
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.BETAS: [0.9, 0.999]
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.MOMS: [0.9, 0.8052631]
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.PCT_START: 0.4
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.WARMUP_ITER: 500
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.DECAY_STEP_LIST: [60, 65]
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.LR_WARMUP: False
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 35
+2024-12-24 21:10:50,268   INFO  cfg.OPTIMIZATION.LOSS_SCALE_FP16: 32
+2024-12-24 21:10:50,268   INFO  cfg.TAG: bevfusion
+2024-12-24 21:10:50,268   INFO  cfg.EXP_GROUP_PATH: home/junfu/data/lir/OpenPCDet/tools/cfgs/nuscenes_models
+2024-12-24 21:10:50,275   INFO  ----------- Create dataloader & network & optimizer -----------
+2024-12-24 21:10:50,276   INFO  Loading KITTI dataset
+2024-12-24 21:10:50,497   INFO  Total samples for KITTI dataset: 5139
+2024-12-24 21:10:51,412   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/checkpoint_epoch_6.pth to GPU
+2024-12-24 21:10:51,784   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/latest_model.pth to GPU
+2024-12-24 21:10:52,772   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/checkpoint_epoch_5.pth to GPU
+2024-12-24 21:10:54,366   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/checkpoint_epoch_4.pth to GPU
+2024-12-24 21:10:58,973   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/checkpoint_epoch_3.pth to GPU
+2024-12-24 21:11:03,776   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/checkpoint_epoch_2.pth to GPU
+2024-12-24 21:11:07,793   INFO  ==> Loading parameters from checkpoint /media/data/junfu_data/lidar_image/OpenPCDet/output/ckpt/checkpoint_epoch_1.pth to GPU
+2024-12-24 21:11:08,876   INFO  ----------- Model BevFusion created, param count: 44401489 -----------
+2024-12-24 21:11:08,876   INFO  BevFusion(
+  (vfe): MeanVFE()
+  (backbone_3d): VoxelResBackBone8x(
+    (conv_input): SparseSequential(
+      (0): SubMConv3d(4, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+      (1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      (2): ReLU()
+    )
+    (conv1): SparseSequential(
+      (0): SparseBasicBlock(
+        (conv1): SubMConv3d(16, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(16, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+      (1): SparseBasicBlock(
+        (conv1): SubMConv3d(16, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(16, 16, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(16, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+    )
+    (conv2): SparseSequential(
+      (0): SparseSequential(
+        (0): SparseConv3d(16, 32, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (1): SparseBasicBlock(
+        (conv1): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+      (2): SparseBasicBlock(
+        (conv1): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(32, 32, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+    )
+    (conv3): SparseSequential(
+      (0): SparseSequential(
+        (0): SparseConv3d(32, 64, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (1): SparseBasicBlock(
+        (conv1): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+      (2): SparseBasicBlock(
+        (conv1): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(64, 64, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+    )
+    (conv4): SparseSequential(
+      (0): SparseSequential(
+        (0): SparseConv3d(64, 128, kernel_size=[3, 3, 3], stride=[2, 2, 2], padding=[0, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (1): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (1): SparseBasicBlock(
+        (conv1): SubMConv3d(128, 128, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(128, 128, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+      (2): SparseBasicBlock(
+        (conv1): SubMConv3d(128, 128, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn1): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (relu): ReLU()
+        (conv2): SubMConv3d(128, 128, kernel_size=[3, 3, 3], stride=[1, 1, 1], padding=[1, 1, 1], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+        (bn2): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      )
+    )
+    (conv_out): SparseSequential(
+      (0): SparseConv3d(128, 128, kernel_size=[3, 1, 1], stride=[2, 1, 1], padding=[0, 0, 0], dilation=[1, 1, 1], output_padding=[0, 0, 0], bias=False, algo=ConvAlgo.MaskImplicitGemm)
+      (1): BatchNorm1d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      (2): ReLU()
+    )
+  )
+  (map_to_bev_module): HeightCompression()
+  (pfe): None
+  (image_backbone): SwinTransformer(
+    (patch_embed): PatchEmbed(
+      (adap_padding): AdaptivePadding()
+      (projection): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+      (norm): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+    )
+    (drop_after_pos): Dropout(p=0.0, inplace=False)
+    (stages): ModuleList(
+      (0): SwinBlockSequence(
+        (blocks): ModuleList(
+          (0-1): 2 x SwinBlock(
+            (norm1): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+            (attn): ShiftWindowMSA(
+              (w_msa): WindowMSA(
+                (qkv): Linear(in_features=96, out_features=288, bias=True)
+                (attn_drop): Dropout(p=0.0, inplace=False)
+                (proj): Linear(in_features=96, out_features=96, bias=True)
+                (proj_drop): Dropout(p=0.0, inplace=False)
+                (softmax): Softmax(dim=-1)
+              )
+              (drop): DropPath()
+            )
+            (norm2): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+            (ffn): FFN(
+              (activate): GELU(approximate='none')
+              (layers): Sequential(
+                (0): Sequential(
+                  (0): Linear(in_features=96, out_features=384, bias=True)
+                  (1): GELU(approximate='none')
+                  (2): Dropout(p=0.0, inplace=False)
+                )
+                (1): Linear(in_features=384, out_features=96, bias=True)
+                (2): Dropout(p=0.0, inplace=False)
+              )
+              (dropout_layer): DropPath()
+            )
+          )
+        )
+        (downsample): PatchMerging(
+          (adap_padding): AdaptivePadding()
+          (sampler): Unfold(kernel_size=(2, 2), dilation=(1, 1), padding=(0, 0), stride=(2, 2))
+          (norm): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+          (reduction): Linear(in_features=384, out_features=192, bias=False)
+        )
+      )
+      (1): SwinBlockSequence(
+        (blocks): ModuleList(
+          (0-1): 2 x SwinBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): ShiftWindowMSA(
+              (w_msa): WindowMSA(
+                (qkv): Linear(in_features=192, out_features=576, bias=True)
+                (attn_drop): Dropout(p=0.0, inplace=False)
+                (proj): Linear(in_features=192, out_features=192, bias=True)
+                (proj_drop): Dropout(p=0.0, inplace=False)
+                (softmax): Softmax(dim=-1)
+              )
+              (drop): DropPath()
+            )
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (ffn): FFN(
+              (activate): GELU(approximate='none')
+              (layers): Sequential(
+                (0): Sequential(
+                  (0): Linear(in_features=192, out_features=768, bias=True)
+                  (1): GELU(approximate='none')
+                  (2): Dropout(p=0.0, inplace=False)
+                )
+                (1): Linear(in_features=768, out_features=192, bias=True)
+                (2): Dropout(p=0.0, inplace=False)
+              )
+              (dropout_layer): DropPath()
+            )
+          )
+        )
+        (downsample): PatchMerging(
+          (adap_padding): AdaptivePadding()
+          (sampler): Unfold(kernel_size=(2, 2), dilation=(1, 1), padding=(0, 0), stride=(2, 2))
+          (norm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (reduction): Linear(in_features=768, out_features=384, bias=False)
+        )
+      )
+      (2): SwinBlockSequence(
+        (blocks): ModuleList(
+          (0-5): 6 x SwinBlock(
+            (norm1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (attn): ShiftWindowMSA(
+              (w_msa): WindowMSA(
+                (qkv): Linear(in_features=384, out_features=1152, bias=True)
+                (attn_drop): Dropout(p=0.0, inplace=False)
+                (proj): Linear(in_features=384, out_features=384, bias=True)
+                (proj_drop): Dropout(p=0.0, inplace=False)
+                (softmax): Softmax(dim=-1)
+              )
+              (drop): DropPath()
+            )
+            (norm2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (ffn): FFN(
+              (activate): GELU(approximate='none')
+              (layers): Sequential(
+                (0): Sequential(
+                  (0): Linear(in_features=384, out_features=1536, bias=True)
+                  (1): GELU(approximate='none')
+                  (2): Dropout(p=0.0, inplace=False)
+                )
+                (1): Linear(in_features=1536, out_features=384, bias=True)
+                (2): Dropout(p=0.0, inplace=False)
+              )
+              (dropout_layer): DropPath()
+            )
+          )
+        )
+        (downsample): PatchMerging(
+          (adap_padding): AdaptivePadding()
+          (sampler): Unfold(kernel_size=(2, 2), dilation=(1, 1), padding=(0, 0), stride=(2, 2))
+          (norm): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+          (reduction): Linear(in_features=1536, out_features=768, bias=False)
+        )
+      )
+      (3): SwinBlockSequence(
+        (blocks): ModuleList(
+          (0-1): 2 x SwinBlock(
+            (norm1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+            (attn): ShiftWindowMSA(
+              (w_msa): WindowMSA(
+                (qkv): Linear(in_features=768, out_features=2304, bias=True)
+                (attn_drop): Dropout(p=0.0, inplace=False)
+                (proj): Linear(in_features=768, out_features=768, bias=True)
+                (proj_drop): Dropout(p=0.0, inplace=False)
+                (softmax): Softmax(dim=-1)
+              )
+              (drop): DropPath()
+            )
+            (norm2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+            (ffn): FFN(
+              (activate): GELU(approximate='none')
+              (layers): Sequential(
+                (0): Sequential(
+                  (0): Linear(in_features=768, out_features=3072, bias=True)
+                  (1): GELU(approximate='none')
+                  (2): Dropout(p=0.0, inplace=False)
+                )
+                (1): Linear(in_features=3072, out_features=768, bias=True)
+                (2): Dropout(p=0.0, inplace=False)
+              )
+              (dropout_layer): DropPath()
+            )
+          )
+        )
+      )
+    )
+    (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (norm2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+    (norm3): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+  )
+  (neck): GeneralizedLSSFPN(
+    (lateral_convs): ModuleList(
+      (0): BasicBlock2D(
+        (conv): Conv2d(448, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (1): BasicBlock2D(
+        (conv): Conv2d(1152, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (fpn_convs): ModuleList(
+      (0-1): 2 x BasicBlock2D(
+        (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+  )
+  (vtransform): DepthLSSTransform(
+    (dtransform): Sequential(
+      (0): Conv2d(1, 8, kernel_size=(1, 1), stride=(1, 1))
+      (1): BatchNorm2d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): Conv2d(8, 32, kernel_size=(5, 5), stride=(4, 4), padding=(2, 2))
+      (4): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU(inplace=True)
+      (6): Conv2d(32, 64, kernel_size=(5, 5), stride=(2, 2), padding=(2, 2))
+      (7): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (8): ReLU(inplace=True)
+    )
+    (depthnet): Sequential(
+      (0): Conv2d(320, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU(inplace=True)
+      (6): Conv2d(256, 198, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (downsample): Sequential(
+      (0): Conv2d(80, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): Conv2d(80, 80, kernel_size=(5, 5), stride=(5, 5), padding=(2, 2), bias=False)
+      (4): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU(inplace=True)
+      (6): Conv2d(80, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (7): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (8): ReLU(inplace=True)
+    )
+  )
+  (fuser): ConvFuser(
+    (conv): Sequential(
+      (0): Conv2d(368, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+    )
+  )
+  (backbone_2d): BaseBEVBackbone(
+    (blocks): ModuleList(
+      (0): Sequential(
+        (0): ZeroPad2d((1, 1, 1, 1))
+        (1): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), bias=False)
+        (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (3): ReLU()
+        (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (9): ReLU()
+        (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (12): ReLU()
+        (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (15): ReLU()
+        (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (18): ReLU()
+      )
+      (1): Sequential(
+        (0): ZeroPad2d((1, 1, 1, 1))
+        (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+        (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (3): ReLU()
+        (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (9): ReLU()
+        (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (12): ReLU()
+        (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (15): ReLU()
+        (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (18): ReLU()
+      )
+    )
+    (deblocks): ModuleList(
+      (0): Sequential(
+        (0): ConvTranspose2d(128, 256, kernel_size=(4, 4), stride=(4, 4), bias=False)
+        (1): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (1): Sequential(
+        (0): ConvTranspose2d(256, 256, kernel_size=(8, 8), stride=(8, 8), bias=False)
+        (1): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+    )
+  )
+  (dense_head): AnchorHeadSingle(
+    (cls_loss_func): SigmoidFocalClassificationLoss()
+    (reg_loss_func): WeightedSmoothL1Loss()
+    (dir_loss_func): WeightedCrossEntropyLoss()
+    (conv_cls): Conv2d(512, 18, kernel_size=(1, 1), stride=(1, 1))
+    (conv_box): Conv2d(512, 42, kernel_size=(1, 1), stride=(1, 1))
+    (conv_dir_cls): Conv2d(512, 12, kernel_size=(1, 1), stride=(1, 1))
+  )
+  (point_head): None
+  (roi_head): None
+)
+2024-12-24 21:11:08,886   INFO  **********************Start training home/junfu/data/lir/OpenPCDet/tools/cfgs/nuscenes_models/bevfusion(default)**********************

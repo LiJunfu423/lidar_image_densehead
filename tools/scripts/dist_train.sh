@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 set -x
-NGPUS=$1
-PY_ARGS=${@:2}
+NGPUS=$1 #GPU数量
+PY_ARGS=${@:2} #除GPU数量外的其他参数
 
-while true
+while true #随机选取一个端口
 do
     PORT=$(( ((RANDOM<<15)|RANDOM) % 49152 + 10000 ))
     status="$(nc -z 127.0.0.1 $PORT < /dev/null &>/dev/null; echo $?)"

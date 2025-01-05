@@ -168,8 +168,10 @@ class TransFusionHead(nn.Module):
         local_max[:, :, padding:(-padding), padding:(-padding)] = local_max_inner
         # for Pedestrian & Traffic_cone in nuScenes
         if self.dataset_name == "nuScenes":
-            local_max[ :, 8, ] = F.max_pool2d(heatmap[:, 8], kernel_size=1, stride=1, padding=0)
-            local_max[ :, 9, ] = F.max_pool2d(heatmap[:, 9], kernel_size=1, stride=1, padding=0)
+            local_max[ :, 0, ] = F.max_pool2d(heatmap[:, 0], kernel_size=1, stride=1, padding=0)
+            local_max[ :, 1, ] = F.max_pool2d(heatmap[:, 1], kernel_size=1, stride=1, padding=0)
+            local_max[ :, 2, ] = F.max_pool2d(heatmap[:, 2], kernel_size=1, stride=1, padding=0)
+            # local_max[ :, 9, ] = F.max_pool2d(heatmap[:, 9], kernel_size=1, stride=1, padding=0)
         # for Pedestrian & Cyclist in Waymo
         elif self.dataset_name == "Waymo":
             local_max[ :, 1, ] = F.max_pool2d(heatmap[:, 1], kernel_size=1, stride=1, padding=0)
@@ -223,6 +225,7 @@ class TransFusionHead(nn.Module):
         if not self.training:
             bboxes = self.get_bboxes(res)
             batch_dict['final_box_dicts'] = bboxes
+            # print("Final bounding boxes: ", bboxes)  # 输出生成的边界框test
         else:
             gt_boxes = batch_dict['gt_boxes']
             gt_bboxes_3d = gt_boxes[...,:-1]
@@ -382,16 +385,20 @@ class TransFusionHead(nn.Module):
         return loss_all,loss_dict
 
     def encode_bbox(self, bboxes):
+
         code_size = 10
         targets = torch.zeros([bboxes.shape[0], code_size]).to(bboxes.device)
-        targets[:, 0] = (bboxes[:, 0] - self.point_cloud_range[0]) / (self.feature_map_stride * self.voxel_size[0])
-        targets[:, 1] = (bboxes[:, 1] - self.point_cloud_range[1]) / (self.feature_map_stride * self.voxel_size[1])
-        targets[:, 3:6] = bboxes[:, 3:6].log()
-        targets[:, 2] = bboxes[:, 2]
-        targets[:, 6] = torch.sin(bboxes[:, 6])
-        targets[:, 7] = torch.cos(bboxes[:, 6])
+        # print("targets shape:", targets.shape)
+        # print("bboxes shape:", bboxes.shape)
+        targets[:, 0] = (bboxes[:, 0] - self.point_cloud_range[0]) / (self.feature_map_stride * self.voxel_size[0])#x
+        targets[:, 1] = (bboxes[:, 1] - self.point_cloud_range[1]) / (self.feature_map_stride * self.voxel_size[1])#y
+        targets[:, 3:6] = bboxes[:, 3:6].log()# 对边界框的尺寸 (length, width, height) 取对数
+        targets[:, 2] = bboxes[:, 2] 
+        targets[:, 6] = torch.sin(bboxes[:, 6]) # 对旋转角度取正弦
+        targets[:, 7] = torch.cos(bboxes[:, 6])# 对旋转角度取余弦
         if code_size == 10:
-            targets[:, 8:10] = bboxes[:, 7:]
+            # targets[:, 8:10] = bboxes[:, 7:]
+            targets[:, 7:] = bboxes[:, 6:]
         return targets
 
     def decode_bbox(self, heatmap, rot, dim, center, height, vel, filter=False):

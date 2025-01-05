@@ -1,0 +1,314 @@
+2025-01-03 00:09:49,622   INFO  **********************Start logging**********************
+2025-01-03 00:09:49,622   INFO  CUDA_VISIBLE_DEVICES=2
+2025-01-03 00:09:49,622   INFO  cfg_file         /home/junfu/data/lidar_image/OpenPCDet/tools/cfgs/nuscenes_models/bevfusion.yaml
+2025-01-03 00:09:49,623   INFO  batch_size       10
+2025-01-03 00:09:49,623   INFO  ckpt             /home/junfu/data/lidar_image/OpenPCDet/output/ckpt/latest_model.pth
+2025-01-03 00:09:49,623   INFO  pretrained_model None
+2025-01-03 00:09:49,623   INFO  workers          4
+2025-01-03 00:09:49,624   INFO  extra_tag        default
+2025-01-03 00:09:49,624   INFO  launcher         none
+2025-01-03 00:09:49,624   INFO  tcp_port         18888
+2025-01-03 00:09:49,624   INFO  local_rank       None
+2025-01-03 00:09:49,625   INFO  set_cfgs         None
+2025-01-03 00:09:49,625   INFO  max_waiting_mins 30
+2025-01-03 00:09:49,625   INFO  start_epoch      0
+2025-01-03 00:09:49,625   INFO  eval_tag         default
+2025-01-03 00:09:49,625   INFO  eval_all         False
+2025-01-03 00:09:49,626   INFO  ckpt_dir         None
+2025-01-03 00:09:49,626   INFO  save_to_file     False
+2025-01-03 00:09:49,626   INFO  infer_time       False
+2025-01-03 00:09:49,626   INFO  cfg.ROOT_DIR: /media/data/junfu_data/lidar_image/OpenPCDet
+2025-01-03 00:09:49,627   INFO  cfg.LOCAL_RANK: 0
+2025-01-03 00:09:49,627   INFO  cfg.CLASS_NAMES: ['bicycle', 'bicycle_rack', 'Cyclist', 'Pedestrian', 'rider', 'Car', 'truck']
+2025-01-03 00:09:49,627   INFO  ----------- DATA_CONFIG -----------
+2025-01-03 00:09:49,627   INFO  cfg.DATA_CONFIG.DATASET: KittiDataset
+2025-01-03 00:09:49,628   INFO  cfg.DATA_CONFIG.DATA_PATH: /home/junfu/data/lidar_image/OpenPCDet/data/vod/lidar
+2025-01-03 00:09:49,628   INFO  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [0, -25.6, -3, 51.2, 25.6, 2]
+2025-01-03 00:09:49,628   INFO  ----------- DATA_SPLIT -----------
+2025-01-03 00:09:49,628   INFO  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+2025-01-03 00:09:49,628   INFO  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+2025-01-03 00:09:49,629   INFO  ----------- INFO_PATH -----------
+2025-01-03 00:09:49,629   INFO  cfg.DATA_CONFIG.INFO_PATH.train: ['kitti_infos_train.pkl']
+2025-01-03 00:09:49,629   INFO  cfg.DATA_CONFIG.INFO_PATH.test: ['kitti_infos_val.pkl']
+2025-01-03 00:09:49,629   INFO  cfg.DATA_CONFIG.GET_ITEM_LIST: ['points', 'images', 'calib_matricies']
+2025-01-03 00:09:49,630   INFO  cfg.DATA_CONFIG.FOV_POINTS_ONLY: True
+2025-01-03 00:09:49,630   INFO  ----------- DATA_AUGMENTOR -----------
+2025-01-03 00:09:49,630   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_world_rotation', 'gt_sampling']
+2025-01-03 00:09:49,630   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x']}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+2025-01-03 00:09:49,631   INFO  ----------- POINT_FEATURE_ENCODING -----------
+2025-01-03 00:09:49,631   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+2025-01-03 00:09:49,631   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z', 'intensity']
+2025-01-03 00:09:49,631   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+2025-01-03 00:09:49,632   INFO  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.05, 0.05, 0.1], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 16000, 'test': 40000}}, {'NAME': 'image_calibrate'}]
+2025-01-03 00:09:49,632   INFO  cfg.DATA_CONFIG._BASE_CONFIG_: /home/junfu/data/lidar_image/OpenPCDet/tools/cfgs/dataset_configs/kitti_dataset.yaml
+2025-01-03 00:09:49,632   INFO  ----------- CAMERA_CONFIG -----------
+2025-01-03 00:09:49,632   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.USE_CAMERA: True
+2025-01-03 00:09:49,633   INFO  ----------- IMAGE -----------
+2025-01-03 00:09:49,633   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.IMAGE.FINAL_DIM: [256, 704]
+2025-01-03 00:09:49,633   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.IMAGE.RESIZE_LIM_TRAIN: [0.4, 0.6]
+2025-01-03 00:09:49,633   INFO  cfg.DATA_CONFIG.CAMERA_CONFIG.IMAGE.RESIZE_LIM_TEST: [0.48, 0.48]
+2025-01-03 00:09:49,634   INFO  ----------- MODEL -----------
+2025-01-03 00:09:49,634   INFO  cfg.MODEL.NAME: BevFusion
+2025-01-03 00:09:49,634   INFO  ----------- VFE -----------
+2025-01-03 00:09:49,634   INFO  cfg.MODEL.VFE.NAME: MeanVFE
+2025-01-03 00:09:49,634   INFO  ----------- BACKBONE_3D -----------
+2025-01-03 00:09:49,635   INFO  cfg.MODEL.BACKBONE_3D.NAME: VoxelResBackBone8x
+2025-01-03 00:09:49,635   INFO  cfg.MODEL.BACKBONE_3D.USE_BIAS: False
+2025-01-03 00:09:49,635   INFO  ----------- MAP_TO_BEV -----------
+2025-01-03 00:09:49,635   INFO  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+2025-01-03 00:09:49,636   INFO  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+2025-01-03 00:09:49,636   INFO  ----------- IMAGE_BACKBONE -----------
+2025-01-03 00:09:49,636   INFO  cfg.MODEL.IMAGE_BACKBONE.NAME: SwinTransformer
+2025-01-03 00:09:49,636   INFO  cfg.MODEL.IMAGE_BACKBONE.EMBED_DIMS: 96
+2025-01-03 00:09:49,636   INFO  cfg.MODEL.IMAGE_BACKBONE.DEPTHS: [2, 2, 6, 2]
+2025-01-03 00:09:49,637   INFO  cfg.MODEL.IMAGE_BACKBONE.NUM_HEADS: [3, 6, 12, 24]
+2025-01-03 00:09:49,637   INFO  cfg.MODEL.IMAGE_BACKBONE.WINDOW_SIZE: 7
+2025-01-03 00:09:49,637   INFO  cfg.MODEL.IMAGE_BACKBONE.MLP_RATIO: 4
+2025-01-03 00:09:49,637   INFO  cfg.MODEL.IMAGE_BACKBONE.DROP_RATE: 0.0
+2025-01-03 00:09:49,638   INFO  cfg.MODEL.IMAGE_BACKBONE.ATTN_DROP_RATE: 0.0
+2025-01-03 00:09:49,638   INFO  cfg.MODEL.IMAGE_BACKBONE.DROP_PATH_RATE: 0.2
+2025-01-03 00:09:49,638   INFO  cfg.MODEL.IMAGE_BACKBONE.PATCH_NORM: True
+2025-01-03 00:09:49,638   INFO  cfg.MODEL.IMAGE_BACKBONE.OUT_INDICES: [1, 2, 3]
+2025-01-03 00:09:49,638   INFO  cfg.MODEL.IMAGE_BACKBONE.WITH_CP: False
+2025-01-03 00:09:49,639   INFO  cfg.MODEL.IMAGE_BACKBONE.CONVERT_WEIGHTS: True
+2025-01-03 00:09:49,639   INFO  ----------- INIT_CFG -----------
+2025-01-03 00:09:49,639   INFO  cfg.MODEL.IMAGE_BACKBONE.INIT_CFG.type: Pretrained
+2025-01-03 00:09:49,639   INFO  cfg.MODEL.IMAGE_BACKBONE.INIT_CFG.checkpoint: swint-nuimages-pretrained.pth
+2025-01-03 00:09:49,639   INFO  ----------- NECK -----------
+2025-01-03 00:09:49,640   INFO  cfg.MODEL.NECK.NAME: GeneralizedLSSFPN
+2025-01-03 00:09:49,640   INFO  cfg.MODEL.NECK.IN_CHANNELS: [192, 384, 768]
+2025-01-03 00:09:49,640   INFO  cfg.MODEL.NECK.OUT_CHANNELS: 256
+2025-01-03 00:09:49,640   INFO  cfg.MODEL.NECK.START_LEVEL: 0
+2025-01-03 00:09:49,641   INFO  cfg.MODEL.NECK.END_LEVEL: -1
+2025-01-03 00:09:49,641   INFO  cfg.MODEL.NECK.NUM_OUTS: 3
+2025-01-03 00:09:49,641   INFO  ----------- VTRANSFORM -----------
+2025-01-03 00:09:49,641   INFO  cfg.MODEL.VTRANSFORM.NAME: DepthLSSTransform
+2025-01-03 00:09:49,641   INFO  cfg.MODEL.VTRANSFORM.IMAGE_SIZE: [256, 704]
+2025-01-03 00:09:49,642   INFO  cfg.MODEL.VTRANSFORM.IN_CHANNEL: 256
+2025-01-03 00:09:49,642   INFO  cfg.MODEL.VTRANSFORM.OUT_CHANNEL: 80
+2025-01-03 00:09:49,642   INFO  cfg.MODEL.VTRANSFORM.FEATURE_SIZE: [32, 88]
+2025-01-03 00:09:49,642   INFO  cfg.MODEL.VTRANSFORM.XBOUND: [0.0, 51.2, 0.08]
+2025-01-03 00:09:49,642   INFO  cfg.MODEL.VTRANSFORM.YBOUND: [-25.6, 25.6, 0.08]
+2025-01-03 00:09:49,643   INFO  cfg.MODEL.VTRANSFORM.ZBOUND: [-3.0, 2.0, 5.0]
+2025-01-03 00:09:49,643   INFO  cfg.MODEL.VTRANSFORM.DBOUND: [1.0, 60.0, 0.5]
+2025-01-03 00:09:49,643   INFO  cfg.MODEL.VTRANSFORM.DOWNSAMPLE: 2
+2025-01-03 00:09:49,643   INFO  ----------- FUSER -----------
+2025-01-03 00:09:49,644   INFO  cfg.MODEL.FUSER.NAME: ConvFuser
+2025-01-03 00:09:49,644   INFO  cfg.MODEL.FUSER.IN_CHANNEL: 336
+2025-01-03 00:09:49,644   INFO  cfg.MODEL.FUSER.OUT_CHANNEL: 256
+2025-01-03 00:09:49,644   INFO  ----------- BACKBONE_2D -----------
+2025-01-03 00:09:49,644   INFO  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+2025-01-03 00:09:49,645   INFO  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+2025-01-03 00:09:49,645   INFO  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+2025-01-03 00:09:49,645   INFO  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+2025-01-03 00:09:49,645   INFO  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [4, 8]
+2025-01-03 00:09:49,645   INFO  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+2025-01-03 00:09:49,646   INFO  cfg.MODEL.BACKBONE_2D.USE_CONV_FOR_NO_STRIDE: True
+2025-01-03 00:09:49,646   INFO  ----------- DENSE_HEAD -----------
+2025-01-03 00:09:49,646   INFO  cfg.MODEL.DENSE_HEAD.NAME: AnchorHeadSingle
+2025-01-03 00:09:49,646   INFO  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+2025-01-03 00:09:49,647   INFO  cfg.MODEL.DENSE_HEAD.USE_DIRECTION_CLASSIFIER: True
+2025-01-03 00:09:49,647   INFO  cfg.MODEL.DENSE_HEAD.DIR_OFFSET: 0.78539
+2025-01-03 00:09:49,647   INFO  cfg.MODEL.DENSE_HEAD.DIR_LIMIT_OFFSET: 0.0
+2025-01-03 00:09:49,647   INFO  cfg.MODEL.DENSE_HEAD.NUM_DIR_BINS: 2
+2025-01-03 00:09:49,647   INFO  cfg.MODEL.DENSE_HEAD.ANCHOR_GENERATOR_CONFIG: [{'class_name': 'Car', 'anchor_sizes': [[3.9, 1.6, 1.56]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-1.78], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.6, 'unmatched_threshold': 0.45}, {'class_name': 'Pedestrian', 'anchor_sizes': [[0.8, 0.6, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.6], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'Cyclist', 'anchor_sizes': [[1.76, 0.6, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.6], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'bicycle', 'anchor_sizes': [[1.6, 0.6, 0.83]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.6], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'bicycle_rack', 'anchor_sizes': [[0.9, 1.7, 2.6]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.2], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'rider', 'anchor_sizes': [[1.5, 0.7, 0.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.6], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'truck', 'anchor_sizes': [[5.9, 4.7, 3.6]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [-0.2], 'align_center': False, 'feature_map_stride': 2, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}]
+2025-01-03 00:09:49,648   INFO  ----------- TARGET_ASSIGNER_CONFIG -----------
+2025-01-03 00:09:49,648   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NAME: AxisAlignedTargetAssigner
+2025-01-03 00:09:49,648   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.POS_FRACTION: -1.0
+2025-01-03 00:09:49,648   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.SAMPLE_SIZE: 512
+2025-01-03 00:09:49,649   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NORM_BY_NUM_EXAMPLES: False
+2025-01-03 00:09:49,649   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MATCH_HEIGHT: False
+2025-01-03 00:09:49,649   INFO  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.BOX_CODER: ResidualCoder
+2025-01-03 00:09:49,649   INFO  ----------- LOSS_CONFIG -----------
+2025-01-03 00:09:49,649   INFO  ----------- LOSS_WEIGHTS -----------
+2025-01-03 00:09:49,650   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+2025-01-03 00:09:49,650   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+2025-01-03 00:09:49,650   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.dir_weight: 0.2
+2025-01-03 00:09:49,650   INFO  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2025-01-03 00:09:49,650   INFO  ----------- POST_PROCESSING -----------
+2025-01-03 00:09:49,651   INFO  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+2025-01-03 00:09:49,651   INFO  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.1
+2025-01-03 00:09:49,651   INFO  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+2025-01-03 00:09:49,651   INFO  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+2025-01-03 00:09:49,652   INFO  ----------- NMS_CONFIG -----------
+2025-01-03 00:09:49,652   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+2025-01-03 00:09:49,652   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2025-01-03 00:09:49,652   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.01
+2025-01-03 00:09:49,652   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2025-01-03 00:09:49,653   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2025-01-03 00:09:49,653   INFO  ----------- OPTIMIZATION -----------
+2025-01-03 00:09:49,653   INFO  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 4
+2025-01-03 00:09:49,653   INFO  cfg.OPTIMIZATION.NUM_EPOCHS: 100
+2025-01-03 00:09:49,653   INFO  cfg.OPTIMIZATION.OPTIMIZER: adam_cosineanneal
+2025-01-03 00:09:49,654   INFO  cfg.OPTIMIZATION.LR: 0.01
+2025-01-03 00:09:49,654   INFO  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.01
+2025-01-03 00:09:49,654   INFO  cfg.OPTIMIZATION.MOMENTUM: 0.9
+2025-01-03 00:09:49,655   INFO  cfg.OPTIMIZATION.BETAS: [0.9, 0.999]
+2025-01-03 00:09:49,655   INFO  cfg.OPTIMIZATION.MOMS: [0.9, 0.8052631]
+2025-01-03 00:09:49,655   INFO  cfg.OPTIMIZATION.PCT_START: 0.4
+2025-01-03 00:09:49,656   INFO  cfg.OPTIMIZATION.WARMUP_ITER: 1200
+2025-01-03 00:09:49,656   INFO  cfg.OPTIMIZATION.DECAY_STEP_LIST: [60, 85]
+2025-01-03 00:09:49,656   INFO  cfg.OPTIMIZATION.LR_WARMUP: False
+2025-01-03 00:09:49,656   INFO  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+2025-01-03 00:09:49,657   INFO  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 35
+2025-01-03 00:09:49,657   INFO  cfg.OPTIMIZATION.LOSS_SCALE_FP16: 32
+2025-01-03 00:09:49,657   INFO  cfg.TAG: bevfusion
+2025-01-03 00:09:49,658   INFO  cfg.EXP_GROUP_PATH: home/junfu/data/lidar_image/OpenPCDet/tools/cfgs/nuscenes_models
+2025-01-03 00:09:49,659   INFO  Loading KITTI dataset
+2025-01-03 00:09:49,722   INFO  Total samples for KITTI dataset: 1296
+2025-01-03 00:09:52,005   INFO  ==> Loading parameters from checkpoint /home/junfu/data/lidar_image/OpenPCDet/output/ckpt/latest_model.pth to GPU
+2025-01-03 00:09:53,688   INFO  ==> Checkpoint trained from version: pcdet+0.6.0+8caccce
+2025-01-03 00:09:54,302   INFO  ==> Done (loaded 493/493)
+2025-01-03 00:09:54,385   INFO  *************** EPOCH no_number EVALUATION *****************
+2025-01-03 00:14:23,962   INFO  *************** Performance of EPOCH no_number *****************
+2025-01-03 00:14:23,963   INFO  Generate label finished(sec_per_example: 0.2080 second).
+2025-01-03 00:14:23,963   INFO  recall_roi_0.3: 0.000000
+2025-01-03 00:14:23,963   INFO  recall_rcnn_0.3: 0.507688
+2025-01-03 00:14:23,963   INFO  recall_roi_0.5: 0.000000
+2025-01-03 00:14:23,963   INFO  recall_rcnn_0.5: 0.314050
+2025-01-03 00:14:23,963   INFO  recall_roi_0.7: 0.000000
+2025-01-03 00:14:23,963   INFO  recall_rcnn_0.7: 0.103270
+2025-01-03 00:14:23,969   INFO  Average predicted number of objects(1296 samples): 14.924
+2025-01-03 00:15:42,523   INFO  bicycle AP@0.70, 0.50, 0.50:
+bbox AP:29.3734, 30.1677, 27.6754
+bev  AP:57.8973, 54.3712, 50.5104
+3d   AP:36.2471, 34.4208, 32.5751
+aos  AP:7.09, 8.45, 7.75
+bicycle AP_R40@0.70, 0.50, 0.50:
+bbox AP:24.4051, 25.6294, 23.0853
+bev  AP:57.6141, 53.2339, 48.0826
+3d   AP:33.1355, 31.9677, 28.3807
+aos  AP:6.48, 7.76, 7.08
+bicycle AP@0.70, 0.50, 0.50:
+bbox AP:29.3734, 30.1677, 27.6754
+bev  AP:57.8973, 54.3712, 50.5104
+3d   AP:36.2471, 34.4208, 32.5751
+aos  AP:7.09, 8.45, 7.75
+bicycle AP_R40@0.70, 0.50, 0.50:
+bbox AP:24.4051, 25.6294, 23.0853
+bev  AP:57.6141, 53.2339, 48.0826
+3d   AP:33.1355, 31.9677, 28.3807
+aos  AP:6.48, 7.76, 7.08
+bicycle_rack AP@0.50, 0.50, 0.50:
+bbox AP:9.0909, 9.0909, 9.0909
+bev  AP:9.0909, 9.0909, 9.0909
+3d   AP:9.0909, 9.0909, 9.0909
+aos  AP:8.72, 9.09, 9.09
+bicycle_rack AP_R40@0.50, 0.50, 0.50:
+bbox AP:4.1667, 2.0349, 2.0349
+bev  AP:4.0541, 2.0625, 2.0625
+3d   AP:3.6940, 1.8750, 1.8750
+aos  AP:1.94, 1.07, 1.07
+bicycle_rack AP@0.50, 0.50, 0.50:
+bbox AP:9.0909, 9.0909, 9.0909
+bev  AP:9.0909, 9.0909, 9.0909
+3d   AP:9.0909, 9.0909, 9.0909
+aos  AP:8.72, 9.09, 9.09
+bicycle_rack AP_R40@0.50, 0.50, 0.50:
+bbox AP:4.1667, 2.0349, 2.0349
+bev  AP:4.0541, 2.0625, 2.0625
+3d   AP:3.6940, 1.8750, 1.8750
+aos  AP:1.94, 1.07, 1.07
+Cyclist AP@0.50, 0.50, 0.50:
+bbox AP:57.0909, 52.6932, 51.1094
+bev  AP:57.4122, 52.7422, 50.9255
+3d   AP:50.6929, 49.9258, 44.4172
+aos  AP:49.77, 45.56, 43.52
+Cyclist AP_R40@0.50, 0.50, 0.50:
+bbox AP:55.4498, 54.2571, 49.9579
+bev  AP:55.7374, 52.6231, 48.3281
+3d   AP:50.4784, 47.5540, 43.3404
+aos  AP:48.01, 46.17, 42.18
+Cyclist AP@0.50, 0.50, 0.50:
+bbox AP:57.0909, 52.6932, 51.1094
+bev  AP:57.4122, 52.7422, 50.9255
+3d   AP:50.6929, 49.9258, 44.4172
+aos  AP:49.77, 45.56, 43.52
+Cyclist AP_R40@0.50, 0.50, 0.50:
+bbox AP:55.4498, 54.2571, 49.9579
+bev  AP:55.7374, 52.6231, 48.3281
+3d   AP:50.4784, 47.5540, 43.3404
+aos  AP:48.01, 46.17, 42.18
+Pedestrian AP@0.50, 0.50, 0.50:
+bbox AP:10.6703, 21.3519, 16.5485
+bev  AP:0.2966, 2.7273, 2.3410
+3d   AP:0.2392, 1.4239, 1.5540
+aos  AP:9.69, 19.16, 15.38
+Pedestrian AP_R40@0.50, 0.50, 0.50:
+bbox AP:3.8669, 15.8062, 13.8628
+bev  AP:0.1631, 1.7029, 1.6151
+3d   AP:0.0460, 0.6445, 0.6866
+aos  AP:2.92, 12.81, 11.29
+Pedestrian AP@0.50, 0.50, 0.50:
+bbox AP:10.6703, 21.3519, 16.5485
+bev  AP:0.2966, 2.7273, 2.3410
+3d   AP:0.2392, 1.4239, 1.5540
+aos  AP:9.69, 19.16, 15.38
+Pedestrian AP_R40@0.50, 0.50, 0.50:
+bbox AP:3.8669, 15.8062, 13.8628
+bev  AP:0.1631, 1.7029, 1.6151
+3d   AP:0.0460, 0.6445, 0.6866
+aos  AP:2.92, 12.81, 11.29
+rider AP@0.50, 0.50, 0.50:
+bbox AP:0.0000, 0.0000, 0.0000
+bev  AP:0.0000, 0.0000, 0.0000
+3d   AP:0.0000, 0.0000, 0.0000
+aos  AP:0.00, 0.00, 0.00
+rider AP_R40@0.50, 0.50, 0.50:
+bbox AP:0.0000, 0.0000, 0.0000
+bev  AP:0.0000, 0.0000, 0.0000
+3d   AP:0.0000, 0.0000, 0.0000
+aos  AP:0.00, 0.00, 0.00
+rider AP@0.50, 0.50, 0.50:
+bbox AP:0.0000, 0.0000, 0.0000
+bev  AP:0.0000, 0.0000, 0.0000
+3d   AP:0.0000, 0.0000, 0.0000
+aos  AP:0.00, 0.00, 0.00
+rider AP_R40@0.50, 0.50, 0.50:
+bbox AP:0.0000, 0.0000, 0.0000
+bev  AP:0.0000, 0.0000, 0.0000
+3d   AP:0.0000, 0.0000, 0.0000
+aos  AP:0.00, 0.00, 0.00
+Car AP@0.70, 0.70, 0.70:
+bbox AP:0.8740, 3.0212, 3.1482
+bev  AP:0.0159, 0.2114, 0.2114
+3d   AP:0.0055, 0.0538, 0.0850
+aos  AP:0.70, 0.77, 0.89
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:0.4570, 1.7927, 1.9654
+bev  AP:0.0042, 0.0180, 0.0236
+3d   AP:0.0010, 0.0051, 0.0077
+aos  AP:0.17, 0.58, 0.59
+Car AP@0.70, 0.70, 0.70:
+bbox AP:0.8740, 3.0212, 3.1482
+bev  AP:0.0159, 0.2114, 0.2114
+3d   AP:0.0055, 0.0538, 0.0850
+aos  AP:0.70, 0.77, 0.89
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:0.4570, 1.7927, 1.9654
+bev  AP:0.0042, 0.0180, 0.0236
+3d   AP:0.0010, 0.0051, 0.0077
+aos  AP:0.17, 0.58, 0.59
+truck AP@0.70, 0.70, 0.70:
+bbox AP:52.0303, 54.8019, 48.8141
+bev  AP:52.4196, 57.0313, 50.6416
+3d   AP:24.6556, 28.6874, 26.1174
+aos  AP:48.76, 52.53, 46.61
+truck AP_R40@0.70, 0.70, 0.70:
+bbox AP:51.3207, 52.9746, 47.6882
+bev  AP:51.9597, 56.4675, 49.7288
+3d   AP:19.8988, 25.0223, 22.1763
+aos  AP:47.63, 50.57, 45.29
+truck AP@0.70, 0.70, 0.70:
+bbox AP:52.0303, 54.8019, 48.8141
+bev  AP:52.4196, 57.0313, 50.6416
+3d   AP:24.6556, 28.6874, 26.1174
+aos  AP:48.76, 52.53, 46.61
+truck AP_R40@0.70, 0.70, 0.70:
+bbox AP:51.3207, 52.9746, 47.6882
+bev  AP:51.9597, 56.4675, 49.7288
+3d   AP:19.8988, 25.0223, 22.1763
+aos  AP:47.63, 50.57, 45.29
+
+2025-01-03 00:15:42,527   INFO  Result is saved to /media/data/junfu_data/lidar_image/OpenPCDet/output/eval/epoch_no_number/val/default
+2025-01-03 00:15:42,527   INFO  ****************Evaluation done.*****************

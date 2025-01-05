@@ -37,10 +37,12 @@ def eval_one_epoch(cfg, args, model, dataloader, epoch_id, logger, dist_test=Fal
     class_names = dataset.class_names
     det_annos = []
 
+#------------------------------------------------------------------------------------------------------
+
+
     if getattr(args, 'infer_time', False):
         start_iter = int(len(dataloader) * 0.1)
         infer_time_meter = common_utils.AverageMeter()
-
     logger.info('*************** EPOCH %s EVALUATION *****************' % epoch_id)
     if dist_test:
         num_gpus = torch.cuda.device_count()
@@ -78,6 +80,9 @@ def eval_one_epoch(cfg, args, model, dataloader, epoch_id, logger, dist_test=Fal
             output_path=final_output_dir if args.save_to_file else None
         )
         det_annos += annos
+
+
+
         if cfg.LOCAL_RANK == 0:
             progress_bar.set_postfix(disp_dict)
             progress_bar.update()
@@ -85,10 +90,12 @@ def eval_one_epoch(cfg, args, model, dataloader, epoch_id, logger, dist_test=Fal
     if cfg.LOCAL_RANK == 0:
         progress_bar.close()
 
+
     if dist_test:
         rank, world_size = common_utils.get_dist_info()
         det_annos = common_utils.merge_results_dist(det_annos, len(dataset), tmpdir=result_dir / 'tmpdir')
         metric = common_utils.merge_results_dist([metric], world_size, tmpdir=result_dir / 'tmpdir')
+
 
     logger.info('*************** Performance of EPOCH %s *****************' % epoch_id)
     sec_per_example = (time.time() - start_time) / len(dataloader.dataset)
@@ -112,28 +119,34 @@ def eval_one_epoch(cfg, args, model, dataloader, epoch_id, logger, dist_test=Fal
         logger.info('recall_rcnn_%s: %f' % (cur_thresh, cur_rcnn_recall))
         ret_dict['recall/roi_%s' % str(cur_thresh)] = cur_roi_recall
         ret_dict['recall/rcnn_%s' % str(cur_thresh)] = cur_rcnn_recall
+    
 
     total_pred_objects = 0
     for anno in det_annos:
         total_pred_objects += anno['name'].__len__()
     logger.info('Average predicted number of objects(%d samples): %.3f'
                 % (len(det_annos), total_pred_objects / max(1, len(det_annos))))
-
+    
     with open(result_dir / 'result.pkl', 'wb') as f:
         pickle.dump(det_annos, f)
 
-    result_str, result_dict = dataset.evaluation(
+#------------------------------------------------------------------------------------------------------
+    
+    result_str, result_dict = dataset.evaluation(   #OpenPCDet/pcdet/datasets/kitti/kitti_dataset.evaluation
         det_annos, class_names,
         eval_metric=cfg.MODEL.POST_PROCESSING.EVAL_METRIC,
         output_path=final_output_dir
     )
 
     logger.info(result_str)
+
     ret_dict.update(result_dict)
+
 
     logger.info('Result is saved to %s' % result_dir)
     logger.info('****************Evaluation done.*****************')
     return ret_dict
+    # return result_dict
 
 
 if __name__ == '__main__':

@@ -270,6 +270,8 @@ class VoxelResBackBone8x(nn.Module):
         # [200, 176, 5] -> [200, 176, 2]
         out = self.conv_out(x_conv4)
 
+        # print("backbone 3D is :", out.dense().shape)
+
         batch_dict.update({
             'encoded_spconv_tensor': out,
             'encoded_spconv_tensor_stride': 8

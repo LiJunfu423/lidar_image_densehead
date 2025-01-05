@@ -8,6 +8,12 @@ from torch.nn.utils import clip_grad_norm_
 from pcdet.utils import common_utils, commu_utils
 
 
+#test
+from pcdet.datasets import build_dataloader
+from test import repeat_eval_ckpt
+
+
+
 def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, accumulated_iter, optim_cfg,
                     rank, tbar, total_it_each_epoch, dataloader_iter, tb_log=None, leave_pbar=False, 
                     use_logger_to_record=False, logger=None, logger_iter_interval=50, cur_epoch=None, 
@@ -151,7 +157,8 @@ def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_
                 start_epoch, total_epochs, start_iter, rank, tb_log, ckpt_save_dir, train_sampler=None,
                 lr_warmup_scheduler=None, ckpt_save_interval=1, max_ckpt_save_num=50,
                 merge_all_iters_to_one_epoch=False, use_amp=False,
-                use_logger_to_record=False, logger=None, logger_iter_interval=None, ckpt_save_time_interval=None, show_gpu_stat=False, cfg=None):
+                use_logger_to_record=False, logger=None, logger_iter_interval=None, ckpt_save_time_interval=None, show_gpu_stat=False, cfg=None, 
+                bn=None, wks=None, dt=None,output_dir=None,args=None,ckpt_dir=None):
     accumulated_iter = start_iter
 
     # use for disable data augmentation hook
@@ -209,6 +216,27 @@ def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_
                 save_checkpoint(
                     checkpoint_state(model, optimizer, trained_epoch, accumulated_iter), filename=ckpt_name,
                 )
+
+            # #每5轮测试一次
+            # if trained_epoch % 5 == 0:
+                #加入test
+                logger.info('**********************every epoch testing **********************')
+                test_set, test_loader, sampler = build_dataloader(
+                    dataset_cfg=cfg.DATA_CONFIG,
+                    class_names=cfg.CLASS_NAMES,
+                    batch_size=bn,
+                    dist=dt, workers=wks, logger=logger, training=False
+                )
+                eval_output_dir = output_dir / 'eval_dual' / 'eval_with_train'
+                eval_output_dir.mkdir(parents=True, exist_ok=True)
+
+                repeat_eval_ckpt(
+                    model.module if dt else model,
+                    test_loader, args, eval_output_dir, logger, ckpt_dir,
+                    dist_test=dt
+                )
+                logger.info('**********************End testing**********************')
+
 
 
 def model_state_to_cpu(model_state):

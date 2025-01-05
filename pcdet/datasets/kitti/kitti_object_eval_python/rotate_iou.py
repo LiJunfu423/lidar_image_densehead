@@ -285,7 +285,7 @@ def rotate_iou_kernel_eval(N, K, dev_boxes, dev_query_boxes, dev_iou, criterion=
         block_boxes[tx * 5 + 3] = dev_boxes[dev_box_idx * 5 + 3]
         block_boxes[tx * 5 + 4] = dev_boxes[dev_box_idx * 5 + 4]
     cuda.syncthreads()
-    if tx < row_size:
+    if tx < row_size:#iou计算
         for i in range(col_size):
             offset = row_start * threadsPerBlock * K + col_start * threadsPerBlock + tx * K + i
             dev_iou[offset] = devRotateIoUEval(block_qboxes[i * 5:i * 5 + 5],
@@ -310,10 +310,11 @@ def rotate_iou_gpu_eval(boxes, query_boxes, criterion=-1, device_id=0):
     box_dtype = boxes.dtype
     boxes = boxes.astype(np.float32)
     query_boxes = query_boxes.astype(np.float32)
-    N = boxes.shape[0]
-    K = query_boxes.shape[0]
+    N = boxes.shape[0]#旋转框数量
+    K = query_boxes.shape[0]#查询框数量
     iou = np.zeros((N, K), dtype=np.float32)
     if N == 0 or K == 0:
+        # print("iou = 0")#没走这里
         return iou
     threadsPerBlock = 8 * 8
     cuda.select_device(device_id)

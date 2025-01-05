@@ -1,5 +1,4 @@
 import os
-
 import torch
 import torch.nn as nn
 import numpy as np
@@ -193,18 +192,37 @@ class Detector3DTemplate(nn.Module):
 
         """
         post_process_cfg = self.model_cfg.POST_PROCESSING
+        # print("---------------------------------------batch_dict.keys is" ,batch_dict.keys())  # 打印 batch_dict 中的所有键
+        """
+        'frame_id', 'calib', 'gt_boxes', 'points', 'images', 'trans_lidar_to_cam', 
+        'trans_cam_to_img', 'camera2lidar', 'lidar2image', 'camera_intrinsics', 'image_shape',
+         'img_process_infos', 'lidar_aug_matrix', 'use_lead_xyz', 'voxels', 'voxel_coords', 
+         'voxel_num_points', 'img_aug_matrix', 'batch_size', 'voxel_features', 'encoded_spconv_tensor', 
+         'encoded_spconv_tensor_stride', 'multi_scale_3d_features', 'multi_scale_3d_strides', 
+         'spatial_features', 'spatial_features_stride', 'image_features', 'image_fpn', 
+         'spatial_features_img', 'spatial_features_2d', 'final_box_dicts'
+        """
         batch_size = batch_dict['batch_size']
+        
+
+
         recall_dict = {}
         pred_dicts = []
         for index in range(batch_size):
             if batch_dict.get('batch_index', None) is not None:
                 assert batch_dict['batch_box_preds'].shape.__len__() == 2
+                # assert batch_dict['final_box_dicts']['pred_boxes'].shape.__len__() == 2    #test
                 batch_mask = (batch_dict['batch_index'] == index)
             else:
                 assert batch_dict['batch_box_preds'].shape.__len__() == 3
+
+
+
+                # assert batch_dict['final_box_dicts']['pred_boxes'].shape.__len__() == 3   #test
                 batch_mask = index
 
             box_preds = batch_dict['batch_box_preds'][batch_mask]
+            # box_preds = batch_dict['final_box_dicts']['pred_boxes'][batch_mask]   #test
             src_box_preds = box_preds
             
             if not isinstance(batch_dict['batch_cls_preds'], list):

@@ -8,6 +8,7 @@ from . import kitti_utils
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
 from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from ..dataset import DatasetTemplate
+from PIL import Image
 
 
 class KittiDataset(DatasetTemplate):
@@ -28,6 +29,14 @@ class KittiDataset(DatasetTemplate):
 
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+
+         #camera_config
+        self.camera_config = self.dataset_cfg.get("CAMERA_CONFIG", None)
+        if self.camera_config is not None:
+            self.use_camera = self.camera_config.get("USE_CAMERA", None)
+            self.camera_image_config = self.camera_config.IMAGE
+        else:
+            self.use_camera = False
 
         self.kitti_infos = []
         self.include_kitti_data(self.mode)
@@ -59,12 +68,13 @@ class KittiDataset(DatasetTemplate):
 
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
-
+    #获取lidar数据
     def get_lidar(self, idx):
         lidar_file = self.root_split_path / 'velodyne' / ('%s.bin' % idx)
         assert lidar_file.exists()
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
-
+    
+    #获取image数据
     def get_image(self, idx):
         """
         Loads image for a sample
@@ -73,15 +83,66 @@ class KittiDataset(DatasetTemplate):
         Returns:
             image: (H, W, 3), RGB Image
         """
-        img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
+        img_file = self.root_split_path / 'image_2' / ('%s.jpg' % idx)
         assert img_file.exists()
-        image = io.imread(img_file)
-        image = image.astype(np.float32)
-        image /= 255.0
+        
+        # image = io.imread(img_file)
+        # image = image.astype(np.float32)
+        # image /= 255.0
+        image = Image.open(img_file)
         return image
 
+    def crop_image(self, input_dict):
+        H, W = input_dict["image_shape"]
+        img = input_dict["images"]
+
+        # img = Image.fromarray(img, mode="RGB")
+        # print("crop.img=:", img)
+
+        img_process_infos = []
+        crop_images = []
+        
+        if self.training == True:
+            fH, fW = self.camera_image_config.FINAL_DIM
+            resize_lim = self.camera_image_config.RESIZE_LIM_TRAIN
+            resize = np.random.uniform(*resize_lim)
+            resize_dims = (int(W * resize), int(H * resize))
+            newW, newH = resize_dims
+            crop_h = newH - fH
+            crop_w = int(np.random.uniform(0, max(0, newW - fW)))
+            crop = (crop_w, crop_h, crop_w + fW, crop_h + fH)
+        else:
+            fH, fW = self.camera_image_config.FINAL_DIM
+            resize_lim = self.camera_image_config.RESIZE_LIM_TEST
+            resize = np.mean(resize_lim)
+            resize_dims = (int(W * resize), int(H * resize))
+            newW, newH = resize_dims
+            crop_h = newH - fH
+            crop_w = int(max(0, newW - fW) / 2)
+            crop = (crop_w, crop_h, crop_w + fW, crop_h + fH)
+        
+        # reisze and crop image
+        # img = img.copy()#test
+        # print('###################img增强######################')#test
+        # print('输入img.shape',np.array(img).shape)#test
+
+        img = img.resize(resize_dims)
+        # img= np.resize(img,resize_dims)
+        # print('resize--img.shape',np.array(img).shape)#test
+        img = img.crop(crop)
+        # print('crop--img.shape',np.array(img).shape)#test
+        img1 = np.array(img)
+        #print("img:=", img)#test
+        # crop_images.append(img)#test
+        img_process_infos.append([resize, crop, False, 0])
+        #img_process_infos = [resize, crop, False, 0]
+        input_dict['img_process_infos'] = img_process_infos
+        input_dict['images'] = img1
+        # input_dict['camera_imgs'] = crop_images#test
+        return input_dict
+
     def get_image_shape(self, idx):
-        img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
+        img_file = self.root_split_path / 'image_2' / ('%s.jpg' % idx)
         assert img_file.exists()
         return np.array(io.imread(img_file).shape[:2], dtype=np.int32)
 
@@ -98,7 +159,7 @@ class KittiDataset(DatasetTemplate):
         Returns:
             depth: (H, W), Depth map
         """
-        depth_file = self.root_split_path / 'depth_2' / ('%s.png' % idx)
+        depth_file = self.root_split_path / 'depth_2' / ('%s.jpg' % idx)
         assert depth_file.exists()
         depth = io.imread(depth_file)
         depth = depth.astype(np.float32)
@@ -147,15 +208,19 @@ class KittiDataset(DatasetTemplate):
 
         return pts_valid_flag
 
+   
     def get_infos(self, num_workers=4, has_label=True, count_inside_pts=True, sample_id_list=None):
         import concurrent.futures as futures
 
         def process_single_scene(sample_idx):
+            #打印代码
             print('%s sample_idx: %s' % (self.split, sample_idx))
             info = {}
+            #处理lidar数据
             pc_info = {'num_features': 4, 'lidar_idx': sample_idx}
             info['point_cloud'] = pc_info
 
+            #处理image数据
             image_info = {'image_idx': sample_idx, 'image_shape': self.get_image_shape(sample_idx)}
             info['image'] = image_info
             calib = self.get_calib(sample_idx)
@@ -378,6 +443,9 @@ class KittiDataset(DatasetTemplate):
         sample_idx = info['point_cloud']['lidar_idx']
         img_shape = info['image']['image_shape']
         calib = self.get_calib(sample_idx)
+
+        camera_intrinsics = calib.P2
+
         get_item_list = self.dataset_cfg.get('GET_ITEM_LIST', ['points'])
 
         input_dict = {
@@ -421,10 +489,20 @@ class KittiDataset(DatasetTemplate):
         if "calib_matricies" in get_item_list:
             input_dict["trans_lidar_to_cam"], input_dict["trans_cam_to_img"] = kitti_utils.calib_to_matricies(calib)
 
+        input_dict["camera2lidar"] = np.linalg.inv(input_dict["trans_lidar_to_cam"])
+
+        input_dict["lidar2image"] = np.dot(input_dict['trans_cam_to_img'], input_dict['trans_lidar_to_cam'])
+
+        input_dict["camera_intrinsics"] = camera_intrinsics
+
         input_dict['calib'] = calib
+
+        input_dict["image_shape"] = img_shape
+        #resize
+        input_dict = self.crop_image(input_dict=input_dict)
+
         data_dict = self.prepare_data(data_dict=input_dict)
 
-        data_dict['image_shape'] = img_shape
         return data_dict
 
 
@@ -478,7 +556,9 @@ if __name__ == '__main__':
         ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
         create_kitti_infos(
             dataset_cfg=dataset_cfg,
-            class_names=['Car', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'kitti',
-            save_path=ROOT_DIR / 'data' / 'kitti'
+            # class_names=['bicycle', 'bicycle_rack', 'Cyclist', 'Pedestrian', 'rider', 'Car', 'truck'],#7 #选择需要测试的类别
+            class_names=['Car', 'Pedestrian', 'Cyclist'],#3 #选择需要测试的类别
+            
+            data_path=ROOT_DIR / 'data' / 'vod' / 'lidar',
+            save_path=ROOT_DIR / 'data' / 'vod' / 'lidar'
         )

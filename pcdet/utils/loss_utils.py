@@ -55,8 +55,15 @@ class SigmoidFocalClassificationLoss(nn.Module):
         Returns:
             weighted_loss: (B, #anchors, #classes) float tensor after weighting.
         """
+        # print("Shape of input: ", input.shape)
         pred_sigmoid = torch.sigmoid(input)
         alpha_weight = target * self.alpha + (1 - target) * (1 - self.alpha)
+
+    #test
+        # print("Shape of target: ", target.shape)
+        # print("Shape of pred_sigmoid: ", pred_sigmoid.shape)
+
+
         pt = target * (1.0 - pred_sigmoid) + (1.0 - target) * pred_sigmoid
         focal_weight = alpha_weight * torch.pow(pt, self.gamma)
 

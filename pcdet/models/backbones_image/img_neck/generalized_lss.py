@@ -52,11 +52,19 @@ class GeneralizedLSSFPN(nn.Module):
                 image_fpn (list(tensor)): FPN features.
         """
         # upsample -> cat -> conv1x1 -> conv3x3
+        
         inputs = batch_dict['image_features']
-        assert len(inputs) == len(self.in_channels)
+        # for input in inputs:
+        #     print("input shape is:",input.shape)
+
+        # print("len is :",len(inputs))
+
+        assert len(inputs) == len(self.in_channels)     # len=3
 
         # build laterals
         laterals = [inputs[i + self.start_level] for i in range(len(inputs))]
+
+        # print("laterals len is:",len(laterals))
 
         # build top-down path
         used_backbone_levels = len(laterals) - 1
@@ -69,8 +77,19 @@ class GeneralizedLSSFPN(nn.Module):
             laterals[i] = torch.cat([laterals[i], x], dim=1)
             laterals[i] = self.lateral_convs[i](laterals[i])
             laterals[i] = self.fpn_convs[i](laterals[i])
+        
+        # print("used_backbone_levels is :",used_backbone_levels)
 
         # build outputs
         outs = [laterals[i] for i in range(used_backbone_levels)]
+        # for i in range(used_backbone_levels + 1):
+        #     print(f"laterals[{i}] shape: {laterals[i].shape}")
+
+        
+        # print("outs len is:",len(outs))
+        
+        # for out in outs:
+        #     print("out shape:",out.shape)
+
         batch_dict['image_fpn'] = tuple(outs)
         return batch_dict

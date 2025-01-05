@@ -19,6 +19,11 @@ class HeightCompression(nn.Module):
         """
         encoded_spconv_tensor = batch_dict['encoded_spconv_tensor']
         spatial_features = encoded_spconv_tensor.dense()
+        
+        # print("spatial_features.shape is",spatial_features.shape)
+        #修改的spatial_features.shape is torch.Size([9, 128, 2, 128, 28])
+        #未修改的spatial_features.shape is torch.Size([9, 128, 2, 128, 128])
+
         N, C, D, H, W = spatial_features.shape
         spatial_features = spatial_features.view(N, C * D, H, W)
         batch_dict['spatial_features'] = spatial_features
